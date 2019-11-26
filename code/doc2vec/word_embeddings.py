@@ -8,7 +8,7 @@ from tqdm import tqdm
 # Generates a word2vec model
 def generate_word_2_vec():
 
-    data = [os.path.join('../../data/reviews_data.txt.gz')]
+    data = [os.path.join('../../raw_data/reviews_data.txt.gz')]
 
     documents = []
 
