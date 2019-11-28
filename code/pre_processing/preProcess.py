@@ -42,6 +42,10 @@ def parseData():
     # apply the filtering
     filteredContentCorrectParse = filtered_content[isCorrectParse]
 
+    # normalize the bigram frequency columns
+    filteredContentCorrectParse['bgSUBTLEX'] = (filteredContentCorrectParse['bgSUBTLEX'] - filteredContentCorrectParse['bgSUBTLEX'].mean()) / filteredContentCorrectParse['bgSUBTLEX'].std(ddof=0)
+    filteredContentCorrectParse['bgFacebook'] = (filteredContentCorrectParse['bgFacebook'] - filteredContentCorrectParse['bgFacebook'].mean()) / filteredContentCorrectParse['bgFacebook'].std(ddof=0)
+
     # our positive data are the ones with >= 50 compound rating value
     isPositiveData = filteredContentCorrectParse['ratingcmp'] >= 50
 
