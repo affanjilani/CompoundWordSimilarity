@@ -57,8 +57,8 @@ def PreProcessData():
     filteredContentCorrectParse_negative['label'] = 0
 
     # # write the outputs to csv files. Index=False to remove adding an index column
-    # pd.DataFrame(filteredContentCorrectParse_negative).to_csv("../../pre_processed_data/negative.csv", index=False)
-    # pd.DataFrame(filteredContentCorrectParse_positive).to_csv("../../pre_processed_data/positive.csv", index=False)
+    # filteredContentCorrectParse_negative.to_csv("../../pre_processed_data/negative.csv", index=False)
+    # filteredContentCorrectParse_positive.to_csv("../../pre_processed_data/positive.csv", index=False)
 
 
 # Method that reads both positive and negative csv files and returns a tuple of numpy arrays of both datasets
