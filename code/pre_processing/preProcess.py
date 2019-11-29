@@ -1,15 +1,15 @@
 import pandas as pd
 import os
+import numpy as np
 
 """
-    Method to parse the important data and outputs a positive and negative datasets.
+    File to parse the important data from a raw file.
     Input: None
-    Output: positive.csv --> positive labelled data
-            negative.csv --> negative labelled data
+    Output: A tuple (a,b) where a is the positive dataset and b is the negative dataset
             
     NOTE: THE HEADERS ARE ALSO THERE
 """
-def ParseData():
+def PreProcessData():
     # Read the csv file
     content = pd.read_csv(os.path.join("../../raw_data/LADECv1-2019.csv"))
 
@@ -25,12 +25,6 @@ def ParseData():
         'bgJonesMewhort',
         'bgSUBTLEX',
         'bgFacebook',
-        'LSAc1c2',
-        'LSAc1stim',
-        'LSAc2stim',
-        'c1c2_snautCos',
-        'c1stim_snautCos',
-        'c2stim_snautCos',
         'correctParse'
                       ]
     # Apply the filtering
@@ -56,10 +50,28 @@ def ParseData():
     filteredContentCorrectParse_positive = filteredContentCorrectParse[isPositiveData]
     filteredContentCorrectParse_negative = filteredContentCorrectParse[isNegativeData]
 
+    # Rename the column correctParse to label and change its value from strings to int
+    filteredContentCorrectParse_positive = filteredContentCorrectParse_positive.rename(columns={"correctParse": "label"})
+    filteredContentCorrectParse_negative = filteredContentCorrectParse_negative.rename(columns={"correctParse": "label"})
+    filteredContentCorrectParse_positive['label'] = 1
+    filteredContentCorrectParse_negative['label'] = 0
 
     # # write the outputs to csv files. Index=False to remove adding an index column
-    pd.DataFrame(filteredContentCorrectParse_negative).to_csv("../../pre_processed_data/negative.csv", index=False)
-    pd.DataFrame(filteredContentCorrectParse_positive).to_csv("../../pre_processed_data/positive.csv", index=False)
+    # pd.DataFrame(filteredContentCorrectParse_negative).to_csv("../../pre_processed_data/negative.csv", index=False)
+    # pd.DataFrame(filteredContentCorrectParse_positive).to_csv("../../pre_processed_data/positive.csv", index=False)
+
+
+# Method that reads both positive and negative csv files and returns a tuple of numpy arrays of both datasets
+def CSV2Numpy():
+
+    # Use pandas to read the files and output them as n-dimensional numpy arrays ignoring the constituents as well as
+    # the compound words themselves
+    positiveArray = pd.read_csv(os.path.join("../../pre_processed_data/positive.csv"), skiprows=1).values[:, 3:]
+    negativeArray = pd.read_csv(os.path.join("../../pre_processed_data/negative.csv"), skiprows=1).values[:, 3:]
+
+    return positiveArray, negativeArray
+
 
 if __name__ == "__main__":
-    ParseData()
+    # PreProcessData()
+    CSV2Numpy()
