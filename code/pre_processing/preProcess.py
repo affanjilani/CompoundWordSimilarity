@@ -9,7 +9,7 @@ import os
             
     NOTE: THE HEADERS ARE ALSO THERE
 """
-def parseData():
+def ParseData():
     # Read the csv file
     content = pd.read_csv(os.path.join("../../raw_data/LADECv1-2019.csv"))
 
@@ -62,4 +62,4 @@ def parseData():
     pd.DataFrame(filteredContentCorrectParse_positive).to_csv("../../pre_processed_data/positive.csv", index=False)
 
 if __name__ == "__main__":
-    parseData()
+    ParseData()
