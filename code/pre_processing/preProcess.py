@@ -5,7 +5,7 @@ import numpy as np
 """
     File to parse the important data from a raw file.
     Input: None
-    Output: A tuple (a,b) where a is the positive dataset and b is the negative dataset
+    Output: None but it writes 2 csv files of positive and negative data
             
     NOTE: THE HEADERS ARE ALSO THERE
 """
