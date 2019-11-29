@@ -37,7 +37,7 @@ if __name__ == '__main__':
     model = gensim.models.Word2Vec.load('./opin/opin_rank_vectors')
     vecs = model.wv
     del model
-    w1 = "butter"
+    w1 = "asdf"
     print("Most similar to {0}".format(w1), vecs.most_similar(positive=w1))
 
 
