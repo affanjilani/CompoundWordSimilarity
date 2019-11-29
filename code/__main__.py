@@ -1,10 +1,35 @@
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.metrics import f1_score, roc_auc_score
+import numpy as np
+from code.pre_processing.preProcess import CSV2Numpy
 
 # Preprocess the data
+# Get the positive and negative datasets
+positive,negative = CSV2Numpy()
+
+
+# Combine both the positive and negative data and then shuffle the data
+dataSet = np.concatenate((positive,negative), 0)
+np.random.shuffle(dataSet)
+
+# 70% training, 30% test
+trainingData = dataSet[:int(len(dataSet)*0.7), :]
+testingData = dataSet[int(len(dataSet) * 0.7):, :]
+
+#our training data and label
+x_train = trainingData[:, :-1]
+y_train = trainingData[:, -1]
+y_train = y_train.astype('int')
+
+#our testing data and label
+x_test = testingData[:, :-1]
+y_test = testingData[:, -1]
+y_test = y_test.astype('int')
 
 # Create the model(s)
-
 logReg = LogisticRegression(solver='lbfgs')
+svm = SVC()
 
 
 
@@ -13,6 +38,22 @@ logReg = LogisticRegression(solver='lbfgs')
 # Train the models
 # Assume x_train, y_train, x_test, y_test
 logReg.fit(x_train,y_train)
+svm.fit(x_train,y_train)
 
 # Evaluate the models using the validation set
-print(logReg.score(x_test,y_test))
+# y_predict = logReg.predict(x_test)
+# y_predict2 = logReg.predict(x_train)
+y_predict = svm.predict(x_test)
+y_predict2 = svm.predict(x_train)
+
+print("Macro: " + str(f1_score(y_test,y_predict,average='macro')))
+print("Micro: " + str(f1_score(y_test,y_predict,average='micro')))
+print("Accuracy: " + str(logReg.score(x_test,y_test)))
+print("ROC: " + str(roc_auc_score(y_test,y_predict)))
+
+print("="*20 + " BELOW IS ON TRAINING SET " + "="*20)
+
+print("Macro: " + str(f1_score(y_train,y_predict2,average='macro')))
+print("Micro: " + str(f1_score(y_train,y_predict2,average='micro')))
+print("Accuracy: " + str(logReg.score(x_train,y_train)))
+print("ROC: " + str(roc_auc_score(y_train,y_predict2)))
