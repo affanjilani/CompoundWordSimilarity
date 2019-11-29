@@ -63,8 +63,8 @@ def CSV2Numpy():
 
     # Use pandas to read the files and output them as n-dimensional numpy arrays ignoring the constituents as well as
     # the compound words themselves
-    positiveArray = pd.read_csv(os.path.join("../../pre_processed_data/positive.csv"), skiprows=1).values[:, 3:]
-    negativeArray = pd.read_csv(os.path.join("../../pre_processed_data/negative.csv"), skiprows=1).values[:, 3:]
+    positiveArray = pd.read_csv(os.path.join("../pre_processed_data/positive_final.csv"), skiprows=1).values[:, 3:]
+    negativeArray = pd.read_csv(os.path.join("../pre_processed_data/negative_final.csv"), skiprows=1).values[:, 3:]
 
     return positiveArray, negativeArray
 
