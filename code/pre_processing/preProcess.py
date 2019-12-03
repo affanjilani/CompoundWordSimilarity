@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import numpy as np
 
+dirname = os.path.dirname(__file__)
+
 """
     File to parse the important data from a raw file.
     Input: None
@@ -11,7 +13,7 @@ import numpy as np
 """
 def PreProcessData():
     # Read the csv file
-    content = pd.read_csv(os.path.join("../../raw_data/LADECv1-2019.csv"))
+    content = pd.read_csv(os.path.join(dirname,"..","..","raw_data","LADECv1-2019.csv"))
 
     # We only want certain parameters
     column_fields = [
@@ -54,8 +56,8 @@ def PreProcessData():
     filteredContentCorrectParse_negative['label'] = 0
 
     # # write the outputs to csv files. Index=False to remove adding an index column
-    # filteredContentCorrectParse_negative.to_csv("../../pre_processed_data/negative.csv", index=False)
-    # filteredContentCorrectParse_positive.to_csv("../../pre_processed_data/positive.csv", index=False)
+    filteredContentCorrectParse_negative.to_csv(dirname,"..","..","pre_processed_data","negative.csv", index=False)
+    filteredContentCorrectParse_positive.to_csv(dirname,"..","..","pre_processed_data","positive.csv", index=False)
 
 
 # Method that reads both positive and negative csv files and returns a tuple of numpy arrays of both datasets
@@ -63,8 +65,8 @@ def CSV2Numpy():
 
     # Use pandas to read the files and output them as n-dimensional numpy arrays ignoring the constituents as well as
     # the compound words themselves
-    positiveArray = pd.read_csv(os.path.join("../pre_processed_data/positive_final.csv"), skiprows=1).values[:, 3:]
-    negativeArray = pd.read_csv(os.path.join("../pre_processed_data/negative_final.csv"), skiprows=1).values[:, 3:]
+    positiveArray = pd.read_csv(os.path.join(dirname,'..','..',"pre_processed_data","positive_final.csv"), skiprows=1).values[:, 3:]
+    negativeArray = pd.read_csv(os.path.join(dirname,'..','..',"pre_processed_data","negative_final.csv"), skiprows=1).values[:, 3:]
 
     return positiveArray, negativeArray
 
