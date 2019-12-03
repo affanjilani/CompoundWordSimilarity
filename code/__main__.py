@@ -58,8 +58,8 @@ print("Accuracy: " + str(logReg.score(x_test,y_test)))
 print("ROC: " + str(roc_auc_score(y_test,y_predict)))
 
 print("="*20 + " RANDOM BASELINE " + "="*20)
-y_random = np.array([random.randint(0,2) for y in y_test])
-
+y_random = np.array([random.randint(0,1) for y in y_test])
+print(set(y_random))
 
 print("Macro: " + str(f1_score(y_test,y_random,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_random,average='micro')))
