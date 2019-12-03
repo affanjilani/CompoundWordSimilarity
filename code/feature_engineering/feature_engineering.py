@@ -49,6 +49,7 @@ def first_order_interactions(data):
     return newFeatures
 
 if __name__ == '__main__':
+    pass
     # test = np.arange(0,12).reshape(3,4)
     # print(test)
     # print(first_order_interactions(test))

@@ -3,6 +3,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import f1_score, roc_auc_score
 import numpy as np
 from code.pre_processing.preProcess import CSV2Numpy
+import code.feature_engineering.feature_engineering as feature_eng
 
 # Preprocess the data
 # Get the positive and negative datasets
@@ -12,6 +13,10 @@ positive,negative = CSV2Numpy()
 # Combine both the positive and negative data and then shuffle the data
 dataSet = np.concatenate((positive,negative), 0)
 np.random.shuffle(dataSet)
+
+# Augment the feature matrix
+interactions = feature_eng.first_order_interactions(dataSet)
+dataSet = feature_eng.augment_data(dataSet,interactions)
 
 # 70% training, 30% test
 trainingData = dataSet[:int(len(dataSet)*0.7), :]
@@ -43,8 +48,8 @@ svm.fit(x_train,y_train)
 # Evaluate the models using the validation set
 # y_predict = logReg.predict(x_test)
 # y_predict2 = logReg.predict(x_train)
-y_predict = svm.predict(x_test)
-y_predict2 = svm.predict(x_train)
+y_predict = logReg.predict(x_test)
+y_predict2 = logReg.predict(x_train)
 
 print("Macro: " + str(f1_score(y_test,y_predict,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_predict,average='micro')))
