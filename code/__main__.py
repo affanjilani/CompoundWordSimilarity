@@ -1,9 +1,10 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.metrics import f1_score, roc_auc_score
+from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 import numpy as np
 from code.pre_processing.preProcess import CSV2Numpy
 import code.feature_engineering.feature_engineering as feature_eng
+import random
 
 # Preprocess the data
 # Get the positive and negative datasets
@@ -33,7 +34,7 @@ y_test = testingData[:, -1]
 y_test = y_test.astype('int')
 
 # Create the model(s)
-logReg = LogisticRegression(solver='lbfgs')
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced',)
 svm = SVC()
 
 
@@ -55,6 +56,15 @@ print("Macro: " + str(f1_score(y_test,y_predict,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_predict,average='micro')))
 print("Accuracy: " + str(logReg.score(x_test,y_test)))
 print("ROC: " + str(roc_auc_score(y_test,y_predict)))
+
+print("="*20 + " RANDOM BASELINE " + "="*20)
+y_random = np.array([random.randint(0,2) for y in y_test])
+
+
+print("Macro: " + str(f1_score(y_test,y_random,average='macro')))
+print("Micro: " + str(f1_score(y_test,y_random,average='micro')))
+print("Accuracy: " + str(accuracy_score(y_test,y_random)))
+print("ROC: " + str(roc_auc_score(y_test,y_random)))
 
 print("="*20 + " BELOW IS ON TRAINING SET " + "="*20)
 
