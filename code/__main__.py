@@ -1,4 +1,5 @@
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 import numpy as np
@@ -34,8 +35,11 @@ y_test = testingData[:, -1]
 y_test = y_test.astype('int')
 
 # Create the model(s)
-logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced',)
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced')
 svm = SVC()
+# Create logReg model for AdaBoost
+logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=300)
+ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
 
 
@@ -45,26 +49,34 @@ svm = SVC()
 # Assume x_train, y_train, x_test, y_test
 logReg.fit(x_train,y_train)
 svm.fit(x_train,y_train)
+ada.fit(x_train, y_train)
 
 # Evaluate the models using the validation set
 # y_predict = logReg.predict(x_test)
 # y_predict2 = logReg.predict(x_train)
 y_predict = logReg.predict(x_test)
 y_predict2 = logReg.predict(x_train)
-
-print("Macro: " + str(f1_score(y_test,y_predict,average='macro')))
-print("Micro: " + str(f1_score(y_test,y_predict,average='micro')))
-print("Accuracy: " + str(logReg.score(x_test,y_test)))
-print("ROC: " + str(roc_auc_score(y_test,y_predict)))
+y_ada = ada.predict(x_test)
 
 print("="*20 + " RANDOM BASELINE " + "="*20)
 y_random = np.array([random.randint(0,1) for y in y_test])
-print(set(y_random))
 
 print("Macro: " + str(f1_score(y_test,y_random,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_random,average='micro')))
 print("Accuracy: " + str(accuracy_score(y_test,y_random)))
 print("ROC: " + str(roc_auc_score(y_test,y_random)))
+
+print("="*20 + " LOGISTIC REGRESSION " + "="*20)
+print("Macro: " + str(f1_score(y_test,y_predict,average='macro')))
+print("Micro: " + str(f1_score(y_test,y_predict,average='micro')))
+print("Accuracy: " + str(logReg.score(x_test,y_test)))
+print("ROC: " + str(roc_auc_score(y_test,y_predict)))
+
+print("="*20 + " ADA BOOST ON LOGISTIC REGRESSSION " + "="*20)
+print("Macro: " + str(f1_score(y_test,y_ada,average='macro')))
+print("Micro: " + str(f1_score(y_test,y_ada,average='micro')))
+print("Accuracy: " + str(accuracy_score(y_test,y_ada)))
+print("ROC: " + str(roc_auc_score(y_test,y_ada)))
 
 print("="*20 + " BELOW IS ON TRAINING SET " + "="*20)
 
