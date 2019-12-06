@@ -59,10 +59,16 @@ def log_transformation(data):
     df = pd.DataFrame(data)
     for i in df.columns:
         # ignore the nparses and label columns as their transformation is irrelavent
-        if i == "nparses" or i == "label":
+        if i == 0 or i == 7:
             continue
+        # Create our new data frame column
+        columnOfInterest = df[i]
+        # a numpy column vector
+        newColumn = columnOfInterest.to_numpy(dtype=np.float32).reshape(-1, 1)
+        # apply log transformation handling negative values
+        newColumn = np.log((newColumn - np.min(newColumn)) + 1)
         # apply log transformation and append it to the data frame
-        df[i+"_log"] = (df[i] + 1).transform(np.log)
+        df.insert(6+i, str(i)+"_log", newColumn)
 
     return df.values
 

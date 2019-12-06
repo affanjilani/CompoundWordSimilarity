@@ -13,6 +13,10 @@ from sklearn.base import clone
 # Get the positive and negative datasets
 positive,negative = CSV2Numpy()
 
+# apply log transformation
+positive = feature_eng.log_transformation(positive)
+negative = feature_eng.log_transformation(negative)
+
 
 # Combine both the positive and negative data and then shuffle the data
 dataSet = np.concatenate((positive,negative), 0)
