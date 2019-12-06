@@ -6,6 +6,8 @@ import numpy as np
 from code.pre_processing.preProcess import CSV2Numpy
 import code.feature_engineering.feature_engineering as feature_eng
 import random
+import code.experiments.experiments as experiments
+from sklearn.base import clone
 
 # Preprocess the data
 # Get the positive and negative datasets
@@ -35,13 +37,13 @@ y_test = testingData[:, -1]
 y_test = y_test.astype('int')
 
 # Create the model(s)
-logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced')
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
 svm = SVC()
 # Create logReg model for AdaBoost
-logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=300)
+logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
 ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
-
+print('='*20, clone(logReg).max_iter)
 
 # Split into training and evaluation
 
@@ -84,3 +86,14 @@ print("Macro: " + str(f1_score(y_train,y_predict2,average='macro')))
 print("Micro: " + str(f1_score(y_train,y_predict2,average='micro')))
 print("Accuracy: " + str(logReg.score(x_train,y_train)))
 print("ROC: " + str(roc_auc_score(y_train,y_predict2)))
+
+######################## Try K-Folds ######################
+
+# Create the model(s)
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced')
+svm = SVC()
+# Create logReg model for AdaBoost
+logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=300)
+ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
+
+best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet, k = 5)
