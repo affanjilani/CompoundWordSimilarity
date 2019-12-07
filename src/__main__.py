@@ -12,12 +12,19 @@ from sklearn.base import clone
 # Preprocess the data
 # Get the positive and negative datasets
 positive,negative = CSV2Numpy()
+print(np.shape(negative[:,:-4]),np.shape(negative[:,-1]))
 
-# apply log transformation
+# positive = np.hstack((positive[:,1:4], positive[:,-1].reshape(-1,1)))
+# negative = np.hstack((negative[:,1:4], negative[:,-1].reshape(-1,1)))
+positive = positive[:,4:]
+negative = negative[:,4:]
+
+
+# # apply log transformation
 log_positive = feature_eng.log_transformation(positive)
 log_negative = feature_eng.log_transformation(negative)
-
-# Combine both the positive and negative data and then shuffle the data
+# #
+# # # Combine both the positive and negative data and then shuffle the data
 log_table = np.concatenate((log_positive, log_negative), 0)
 dataSet = np.concatenate((positive,negative), 0)
 
@@ -26,8 +33,8 @@ dataSet = np.concatenate((positive,negative), 0)
 dataSet = feature_eng.augment_data(dataSet, log_table)
 np.random.seed(42)
 np.random.shuffle(dataSet)
-interactions = feature_eng.first_order_interactions(dataSet)
-dataSet = feature_eng.augment_data(dataSet, interactions)
+# interactions = feature_eng.first_order_interactions(dataSet)
+# dataSet = feature_eng.augment_data(dataSet, interactions)
 
 ## SECOND MATRIX
 
@@ -46,9 +53,9 @@ np.random.shuffle(dataSet2)
 interactions = feature_eng.first_order_interactions(dataSet2)
 dataSet2 = feature_eng.augment_data(dataSet2, interactions)
 
-matrix = np.subtract(dataSet2,dataSet)
+# matrix = np.subtract(dataSet2,dataSet)
 
-print(np.max(matrix))
+# print(np.max(matrix))
 
 # 70% training, 30% test
 trainingData = dataSet[:int(len(dataSet)*0.7), :]

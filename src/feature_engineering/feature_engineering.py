@@ -60,7 +60,8 @@ def log_transformation(data):
     df = pd.DataFrame(data)
     for i in df.columns:
         # ignore the nparses and label columns as their transformation is irrelavent
-        if i == 0 or i == 7:
+        # if i == 0 or i == 7:
+        if i == 3:
             continue
         # Create our new data frame column
         columnOfInterest = df[i]
