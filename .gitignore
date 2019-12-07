@@ -106,3 +106,7 @@ venv.bak/
 
 # Big files
 GoogleNews-vectors-negative300.bin
+
+# IDE
+.DS_Store
+.idea/
