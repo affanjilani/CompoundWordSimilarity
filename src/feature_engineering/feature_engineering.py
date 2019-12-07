@@ -49,19 +49,23 @@ def first_order_interactions(data):
         
     return newFeatures
 
-"""
-    Method that does log transformation on the data
-    Input: NxM matrix of data as numpy array
-    Output: Nx(M + (M-2))
-"""
-def log_transformation(data):
+# Method that performs log transformation on only similarities.
+# category: either S=similarities,F=frequencies,SF=similarities and frequencies
+def log_transformation(data, categoryToTransform):
+    columnsToIgnore = []
+    # pick certain columns based on category
+    if categoryToTransform == "S":
+        columnsToIgnore = [0,1,2,3,7]
+    elif categoryToTransform == "F":
+        columnsToIgnore = [0,4,5,6,7]
+    elif categoryToTransform == "SF":
+        columnsToIgnore = [0,7]
     # Create a dataframe
     new_df = pd.DataFrame()
     df = pd.DataFrame(data)
     for i in df.columns:
-        # ignore the nparses and label columns as their transformation is irrelavent
-        # if i == 0 or i == 7:
-        if i == 3:
+        # ignore some columns as they are irrelevant
+        if i in columnsToIgnore:
             continue
         # Create our new data frame column
         columnOfInterest = df[i]
@@ -75,17 +79,27 @@ def log_transformation(data):
     # return the array containing the transformation logs
     return new_df.values
 
-def test_log_transformation(data):
-    # conver the numpy into a data frame
+# similar method to log_transformation but append to the data instead of returning the new columns
+def log_transformation_appending_to_data(data,categoryToTransform):
+    columnsToIgnore = []
+    # pick certain columns based on category
+    if categoryToTransform == "S":
+        columnsToIgnore = [0, 1, 2, 3, 7]
+    elif categoryToTransform == "F":
+        columnsToIgnore = [0, 4, 5, 6, 7]
+    elif categoryToTransform == "SF":
+        columnsToIgnore = [0, 7]
+    # Create a dataframe
+    new_df = pd.DataFrame()
     df = pd.DataFrame(data)
     for i in df.columns:
-        # ignore the nparses and label columns as their transformation is irrelavent
-        if i == 0 or i == 7:
+        # ignore some columns as they are irrelevant
+        if i in columnsToIgnore:
             continue
         # Create our new data frame column
         columnOfInterest = df[i]
         # a numpy column vector
-        newColumn = columnOfInterest.to_numpy(dtype=np.float32).reshape(-1, 1)
+        newColumn = columnOfInterest.to_numpy(dtype=np.float32)
         # apply log transformation handling negative values
         newColumn = np.log((newColumn - np.min(newColumn)) + 1)
         # apply log transformation and append it to the data frame
