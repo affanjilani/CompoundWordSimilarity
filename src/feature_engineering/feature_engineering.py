@@ -55,6 +55,26 @@ def first_order_interactions(data):
     Output: Nx(M + (M-2))
 """
 def log_transformation(data):
+    # Create a dataframe
+    new_df = pd.DataFrame()
+    df = pd.DataFrame(data)
+    for i in df.columns:
+        # ignore the nparses and label columns as their transformation is irrelavent
+        if i == 0 or i == 7:
+            continue
+        # Create our new data frame column
+        columnOfInterest = df[i]
+        # a numpy column vector
+        newColumn = columnOfInterest.to_numpy(dtype=np.float32)
+        # apply log transformation handling negative values
+        newColumn = np.log((newColumn - np.min(newColumn)) + 1)
+        # newColumn = np.log(newColumn  + 1)
+        # apply log transformation and append it to the data frame
+        new_df[i] = newColumn
+    # return the array containing the transformation logs
+    return new_df.values
+
+def test_log_transformation(data):
     # conver the numpy into a data frame
     df = pd.DataFrame(data)
     for i in df.columns:
@@ -68,7 +88,7 @@ def log_transformation(data):
         # apply log transformation handling negative values
         newColumn = np.log((newColumn - np.min(newColumn)) + 1)
         # apply log transformation and append it to the data frame
-        df.insert(6+i, str(i)+"_log", newColumn)
+        df.insert(6 + i, str(i) + "_log", newColumn)
 
     return df.values
 

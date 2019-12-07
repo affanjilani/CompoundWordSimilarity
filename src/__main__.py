@@ -14,17 +14,41 @@ from sklearn.base import clone
 positive,negative = CSV2Numpy()
 
 # apply log transformation
-positive = feature_eng.log_transformation(positive)
-negative = feature_eng.log_transformation(negative)
-
+log_positive = feature_eng.log_transformation(positive)
+log_negative = feature_eng.log_transformation(negative)
 
 # Combine both the positive and negative data and then shuffle the data
+log_table = np.concatenate((log_positive, log_negative), 0)
 dataSet = np.concatenate((positive,negative), 0)
-np.random.shuffle(dataSet)
+
 
 # Augment the feature matrix
+dataSet = feature_eng.augment_data(dataSet, log_table)
+np.random.seed(42)
+np.random.shuffle(dataSet)
 interactions = feature_eng.first_order_interactions(dataSet)
-dataSet = feature_eng.augment_data(dataSet,interactions)
+dataSet = feature_eng.augment_data(dataSet, interactions)
+
+## SECOND MATRIX
+
+positive2,negative2 = CSV2Numpy()
+
+# apply log transformation
+positive2 = feature_eng.test_log_transformation(positive2)
+negative2 = feature_eng.test_log_transformation(negative2)
+
+# Combine both the positive and negative data and then shuffle the data
+dataSet2 = np.concatenate((positive2,negative2), 0)
+np.random.seed(42)
+np.random.shuffle(dataSet2)
+
+# Augment the feature matrix
+interactions = feature_eng.first_order_interactions(dataSet2)
+dataSet2 = feature_eng.augment_data(dataSet2, interactions)
+
+matrix = np.subtract(dataSet2,dataSet)
+
+print(np.max(matrix))
 
 # 70% training, 30% test
 trainingData = dataSet[:int(len(dataSet)*0.7), :]
@@ -101,3 +125,7 @@ logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanc
 ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
 best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet, k = 5)
+
+print("="*20,'dataset','='*20)
+
+best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet2, k = 5)
