@@ -34,8 +34,8 @@ np.random.shuffle(dataSet)
 positive2,negative2 = CSV2Numpy()
 
 # apply log transformation
-positive2 = feature_eng.test_log_transformation(positive2)
-negative2 = feature_eng.test_log_transformation(negative2)
+# positive2 = feature_eng.log_transformation_appending_to_data(positive2,'S')
+# negative2 = feature_eng.log_transformation_appending_to_data(negative2,'S')
 
 # Combine both the positive and negative data and then shuffle the data
 dataSet2 = np.concatenate((positive2,negative2), 0)
@@ -87,6 +87,7 @@ ada.fit(x_train, y_train)
 y_predict = logReg.predict(x_test)
 y_predict2 = logReg.predict(x_train)
 y_ada = ada.predict(x_test)
+y_svm = svm.predict(x_test)
 
 print("="*20 + " RANDOM BASELINE " + "="*20)
 y_random = np.array([random.randint(0,1) for y in y_test])
@@ -107,6 +108,12 @@ print("Macro: " + str(f1_score(y_test,y_ada,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_ada,average='micro')))
 print("Accuracy: " + str(accuracy_score(y_test,y_ada)))
 print("ROC: " + str(roc_auc_score(y_test,y_ada)))
+
+print("="*20 + " ADA BOOST ON LOGISTIC REGRESSSION " + "="*20)
+print("Macro: " + str(f1_score(y_test,y_svm,average='macro')))
+print("Micro: " + str(f1_score(y_test,y_svm,average='micro')))
+print("Accuracy: " + str(accuracy_score(y_test,y_svm)))
+print("ROC: " + str(roc_auc_score(y_test,y_svm)))
 
 print("="*20 + " BELOW IS ON TRAINING SET " + "="*20)
 
