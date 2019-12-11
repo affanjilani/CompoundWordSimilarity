@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
+from src.pre_processing.preProcess import CSV2Numpy
 
 # Takes in the original data array with label and adds the augmented features
 def augment_data(data, augmentation):
     init_features = np.array(data[:,:-1])
 
     # Turn labels into column
-    labels = np.array(data[:,-1]).reshape(-1,1) 
+    labels = np.array(data[:,-1]).reshape(-1, 1)
 
     # Insert the augmentation
     features = np.hstack((init_features,augmentation))
@@ -54,11 +55,11 @@ def first_order_interactions(data):
 def log_transformation(data, categoryToTransform):
     columnsToIgnore = []
     # pick certain columns based on category
-    if categoryToTransform == "S":
+    if categoryToTransform.lower() == "s":
         columnsToIgnore = [0,1,2,3,7]
-    elif categoryToTransform == "F":
+    elif categoryToTransform.lower() == "f":
         columnsToIgnore = [0,4,5,6,7]
-    elif categoryToTransform == "SF":
+    elif categoryToTransform.lower() == "sf":
         columnsToIgnore = [0,7]
     # Create a dataframe
     new_df = pd.DataFrame()
@@ -79,38 +80,43 @@ def log_transformation(data, categoryToTransform):
     # return the array containing the transformation logs
     return new_df.values
 
-# similar method to log_transformation but append to the data instead of returning the new columns
-def log_transformation_appending_to_data(data,categoryToTransform):
-    columnsToIgnore = []
-    # pick certain columns based on category
-    if categoryToTransform == "S":
-        columnsToIgnore = [0, 1, 2, 3, 7]
-    elif categoryToTransform == "F":
-        columnsToIgnore = [0, 4, 5, 6, 7]
-    elif categoryToTransform == "SF":
-        columnsToIgnore = [0, 7]
-    # Create a dataframe
-    new_df = pd.DataFrame()
-    df = pd.DataFrame(data)
-    for i in df.columns:
-        # ignore some columns as they are irrelevant
-        if i in columnsToIgnore:
-            continue
-        # Create our new data frame column
-        columnOfInterest = df[i]
-        # a numpy column vector
-        newColumn = columnOfInterest.to_numpy(dtype=np.float32)
-        # apply log transformation handling negative values
-        newColumn = np.log((newColumn - np.min(newColumn)) + 1)
-        # apply log transformation and append it to the data frame
-        df.insert(6 + i, str(i) + "_log", newColumn)
+"""
+    Method that combines all the possible feature engineering that we want and outputs the desired final dataset
+    Input: 
+        Data: our original dataset
+        categoryToTransform: will be used in log transformation. see log_transformation method
+        ListOfFeatureEngineering: list of strings that our data set will undergo. e.g: ['I','L'] --> 
+        interactions and log transformation. NOTE: ORDER IS IMPORTANT
+        isAugmentAfterEachFeatureEngineer: boolean whether or not we augment after every feature engineering
+"""
+def feature_engineering_pipeline(data, categoryToTransform, listOfFeatureEngineering, isAugmentAfterEachFeatureEngineer):
+    # our final list of things to augment
+    listOfDataToAugment = []
 
-    return df.values
+    # Iterate through the list and apply the transformations
+    for string in listOfFeatureEngineering:
+        if string.lower() == 'i':
+            # interactions, check our flag
+            if isAugmentAfterEachFeatureEngineer:
+                data = augment_data(data,first_order_interactions(data))
+            else:
+                listOfDataToAugment.append(first_order_interactions(data))
+        elif string.lower() == 'l':
+            # log transformation
+            if isAugmentAfterEachFeatureEngineer:
+                data = augment_data(data,log_transformation(data,categoryToTransform))
+            else:
+                listOfDataToAugment.append(log_transformation(data,categoryToTransform))
 
+    # finally augment everything
+    for dataToAugment in listOfDataToAugment:
+        data = augment_data(data,dataToAugment)
+
+    # return the final data
+    return data
 
 if __name__ == '__main__':
+    # pos,neg = CSV2Numpy()
+    # dataSet = np.concatenate((pos, neg), 0)
+    # feature_engineering_pipeline(dataSet, 'SF', ['l','i'], True)
     pass
-    # test = np.arange(0,12).reshape(3,4)
-    # print(test)
-    # print(first_order_interactions(test))
-    # print(augment_data(test,first_order_interactions(test)))
