@@ -53,6 +53,7 @@ def first_order_interactions(data):
 # category: either S=similarities,F=frequencies,SF=similarities and frequencies
 def log_transformation(data, categoryToTransform):
     columnsToIgnore = []
+    print('data in log_transformation',np.shape(data))
     # pick certain columns based on category
     if categoryToTransform == "S":
         columnsToIgnore = [0,1,2,3,7]
@@ -60,6 +61,9 @@ def log_transformation(data, categoryToTransform):
         columnsToIgnore = [0,4,5,6,7]
     elif categoryToTransform == "SF":
         columnsToIgnore = [0,7]
+    else:
+        print('here')
+        columnsToIgnore = [0,np.shape(data)[1]-1]
     # Create a dataframe
     new_df = pd.DataFrame()
     df = pd.DataFrame(data)
@@ -82,6 +86,7 @@ def log_transformation(data, categoryToTransform):
 # similar method to log_transformation but append to the data instead of returning the new columns
 def log_transformation_appending_to_data(data,categoryToTransform):
     columnsToIgnore = []
+    np.shape(data)
     # pick certain columns based on category
     if categoryToTransform == "S":
         columnsToIgnore = [0, 1, 2, 3, 7]
@@ -89,6 +94,8 @@ def log_transformation_appending_to_data(data,categoryToTransform):
         columnsToIgnore = [0, 4, 5, 6, 7]
     elif categoryToTransform == "SF":
         columnsToIgnore = [0, 7]
+    else:
+        columnsToIgnore = [0,np.shape(data)[1]-1]
     # Create a dataframe
     new_df = pd.DataFrame()
     df = pd.DataFrame(data)
