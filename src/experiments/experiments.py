@@ -80,7 +80,7 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
 ## Method that does the entire experiment by first running k fold to get the best model then does the training and testing
 def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=True, split = 0.7):
     # first thing's first, get the best model by running k fold
-    model = k_fold(classifiers,dataSet,k,metric,False)
+    model = k_fold(classifiers, dataSet, k, metric, False)
 
     # now that we have the best model, split the dataset based on the datasplit
 
