@@ -5,6 +5,7 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from src.pre_processing.preProcess import CSV2Numpy
+import pprint
 
 # Perform a fold on a given classifier, given the training and test data. Return the metric of choice on this data
 def perform_fold(classifier, train_data, test_data, metric='ROC'):
@@ -33,7 +34,7 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
     # Initialize dict
     scores = {}
     for clf in classifiers:
-        scores[type(clf).__name__] = np.array([])
+        scores[type(clf).__name__+str(clf.get_params())] = np.array([])
 
     # For each split
     for train_index, test_index in tqdm(kf.split(dataset)):
@@ -47,7 +48,7 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
 
         # We send this into each classifier and perform a fold
         for clf in tqdm(classifiers):
-            clf_name = type(clf).__name__
+            clf_name = type(clf).__name__ + str(clf.get_params())
 
             # Get the score on this split
             score = perform_fold(clone(clf),(x_train,y_train),(x_test,y_test), metric=metric)
@@ -62,25 +63,29 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
         print('='*20, metric, '='*20)
 
     for clf in classifiers:
-        clf_name = type(clf).__name__
+        clf_name = type(clf).__name__ + str(clf.get_params())
 
         # Get the average score for the clf
         clf_score = np.average(scores[clf_name])
 
-        if verbose:
-            print(clf_name,':',clf_score)
+        # if verbose:
+        #     print(clf_name,':',clf_score)
 
         if best_clf[1] < clf_score:
             best_clf = (clf,clf_score)
-
+    pp = pprint.PrettyPrinter(indent=4)
     if verbose:
-        print("="*20, 'Best Classifier', type(best_clf[0]).__name__, metric, ':',best_clf[1])
+        print("="*20, 'Best Classifier', type(best_clf[0]).__name__, metric, ':',best_clf[1],"="*20)
+        print('\t',"*"*10,'\n')
+        pp.pprint(best_clf[0].get_params())
+        print('\t',"*"*10,'\n')
+
     return clone(best_clf[0])
 
 ## Method that does the entire experiment by first running k fold to get the best model then does the training and testing
 def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=True, split = 0.7):
     # first thing's first, get the best model by running k fold
-    model = k_fold(classifiers, dataSet, k, metric, False)
+    model = k_fold(classifiers, dataSet, k, metric, verbose=True)
 
     # now that we have the best model, split the dataset based on the datasplit
 
@@ -119,6 +124,8 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
         print(type(model).__name__ + ": "+ str(f1_score(y_test,y_predict,average='micro')))
     elif metric.lower() == 'acc':
         print(type(model).__name__ + ": "+ str(accuracy_score(y_test,y_predict)))
+
+    return clone(model)
 
 if __name__ == "__main__":
     # LR = LogisticRegression()
