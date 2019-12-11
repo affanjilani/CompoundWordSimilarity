@@ -6,10 +6,10 @@ from src.feature_engineering.feature_engineering import feature_engineering_pipe
 from src.experiments.experiments import experiment_pipeline
 
 # Create the model(s)
-logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
-svm = SVC()
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=2000)
+svm = SVC(gamma='auto')
 # Create logReg model for AdaBoost
-logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
+logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=2000)
 ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
 # Get the original shuffled Dataset
@@ -19,4 +19,4 @@ dataSet = preProcess_pipeline()
 dataSet = feature_engineering_pipeline(dataSet,'SF',['i','l'], True)
 
 # finally run our final dataset through the experiment pipeline
-experiment_pipeline([logReg,svm,ada], dataSet, 5, 'roc', True, 0.9)
+experiment_pipeline([logReg,svm,ada], dataSet, 10, 'roc', True, 0.9)
