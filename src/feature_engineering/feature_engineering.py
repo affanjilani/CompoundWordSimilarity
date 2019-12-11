@@ -53,14 +53,18 @@ def first_order_interactions(data):
 # Method that performs log transformation on only similarities.
 # category: either S=similarities,F=frequencies,SF=similarities and frequencies
 def log_transformation(data, categoryToTransform):
+    # get the shape of matrix
+    row, col = np.shape(data)
+    # retrieve the last col
+    col = col - 1
     columnsToIgnore = []
     # pick certain columns based on category
     if categoryToTransform.lower() == "s":
-        columnsToIgnore = [0,1,2,3,7]
+        columnsToIgnore = [0,1,2,3,col]
     elif categoryToTransform.lower() == "f":
-        columnsToIgnore = [0,4,5,6,7]
+        columnsToIgnore = [0,4,5,6,col]
     elif categoryToTransform.lower() == "sf":
-        columnsToIgnore = [0,7]
+        columnsToIgnore = [0,col]
     # Create a dataframe
     new_df = pd.DataFrame()
     df = pd.DataFrame(data)
