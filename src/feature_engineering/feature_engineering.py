@@ -30,7 +30,7 @@ def first_order_interactions(data):
 
     for index in range(initialSize):
         index2 = index
-        print(np.shape(features))
+        
         while index2<initialSize:
             col1 = features[:,index]
             col2 = features[:,index2]
@@ -57,6 +57,7 @@ def log_transformation(data, categoryToTransform):
     # retrieve the last col
     col = col - 1
     columnsToIgnore = []
+
     # pick certain columns based on category
     if categoryToTransform.lower() == "s":
         columnsToIgnore = [0,1,2,3,col]
