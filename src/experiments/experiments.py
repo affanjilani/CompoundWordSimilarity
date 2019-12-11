@@ -116,14 +116,23 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
     if verbose:
         print('=' * 20, metric, '=' * 20)
 
+    # our output
+    output = 0
+
     if metric.lower() == 'roc':
-        print(type(model).__name__ + ": "+ str(roc_auc_score(y_test,y_predict)))
+        output = roc_auc_score(y_test,y_predict)
+        print(type(model).__name__ + ": "+ str(output))
     elif metric.lower() == 'macro':
-        print(type(model).__name__ + ": "+ str(f1_score(y_test,y_predict,average='macro')))
+        output = f1_score(y_test,y_predict,average='macro')
+        print(type(model).__name__ + ": "+ str(output))
     elif metric.lower() == 'micro':
-        print(type(model).__name__ + ": "+ str(f1_score(y_test,y_predict,average='micro')))
+        output = f1_score(y_test,y_predict,average='micro')
+        print(type(model).__name__ + ": "+ str(output))
     elif metric.lower() == 'acc':
-        print(type(model).__name__ + ": "+ str(accuracy_score(y_test,y_predict)))
+        output = accuracy_score(y_test,y_predict)
+        print(type(model).__name__ + ": "+ str(output))
+
+    return output
 
     return clone(model)
 
