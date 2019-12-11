@@ -73,6 +73,24 @@ ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
 print('='*20, clone(logReg).max_iter)
 
+# Noisy, random data
+positive3,negative3 = CSV2Numpy()
+dataSet3 = np.concatenate((positive3,negative3), 0)
+np.random.seed(42)
+np.random.shuffle(dataSet3)
+
+print(np.shape(dataSet3))
+
+noise = np.random.randn(np.shape(dataSet3)[0],4)
+print(np.shape(noise))
+
+dataSet3 = feature_eng.augment_data(dataSet3,noise)
+log_table = feature_eng.log_transformation(dataSet3,None)
+print(np.shape(dataSet3))
+print('log_table',np.shape(log_table))
+
+dataSet3 = feature_eng.augment_data(dataSet3,log_table)
+print(np.shape(dataSet3))
 # Split into training and evaluation
 
 # Train the models
@@ -109,7 +127,7 @@ print("Micro: " + str(f1_score(y_test,y_ada,average='micro')))
 print("Accuracy: " + str(accuracy_score(y_test,y_ada)))
 print("ROC: " + str(roc_auc_score(y_test,y_ada)))
 
-print("="*20 + " ADA BOOST ON LOGISTIC REGRESSSION " + "="*20)
+print("="*20 + " SVM " + "="*20)
 print("Macro: " + str(f1_score(y_test,y_svm,average='macro')))
 print("Micro: " + str(f1_score(y_test,y_svm,average='micro')))
 print("Accuracy: " + str(accuracy_score(y_test,y_svm)))
@@ -125,14 +143,16 @@ print("ROC: " + str(roc_auc_score(y_train,y_predict2)))
 ######################## Try K-Folds ######################
 
 # Create the model(s)
-logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced')
+logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
 svm = SVC()
 # Create logReg model for AdaBoost
-logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=300)
+logReg2 = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=1000)
 ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 
-best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet, k = 5)
+#best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet, k = 5)
 
 print("="*20,'dataset','='*20)
 
-best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet2, k = 5)
+#best_classifier = experiments.k_fold(classifiers = [logReg, svm, ada],dataset = dataSet2, k = 5)
+
+best_classifier = experiments.k_fold(classifiers = [ada, logReg, svm], dataset = dataSet3, k=5)
