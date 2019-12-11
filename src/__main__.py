@@ -16,7 +16,7 @@ ada = AdaBoostClassifier(base_estimator=logReg2, n_estimators=1000)
 dataSet = preProcess_pipeline()
 
 # next, pass the data set to feature engineering pipeline
-dataSet = feature_engineering_pipeline(dataSet,'SF',['i','l'], True)
+dataSet = feature_engineering_pipeline(dataSet,'SF',['bc','l','i'], True, 0.12)
 
 # finally run our final dataset through the experiment pipeline
 experiment_pipeline([logReg,svm,ada], dataSet, 5, 'roc', True, 0.9)
