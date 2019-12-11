@@ -70,7 +70,16 @@ def CSV2Numpy():
 
     return positiveArray, negativeArray
 
+"""
+    Method that returns a shuffled dataSet
+"""
+def preProcess_pipeline():
+    positive, negative = CSV2Numpy()
+    dataSet = np.concatenate((positive, negative), 0)
+    np.random.shuffle(dataSet)
+    return dataSet
 
 if __name__ == "__main__":
+    pass
     # PreProcessData()
-    CSV2Numpy()
+    # x = preProcess_pipeline()
