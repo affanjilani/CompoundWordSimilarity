@@ -77,10 +77,11 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
             best_clf = (clf,clf_score)
     pp = pprint.PrettyPrinter(indent=4)
     if verbose:
-        print("="*20, 'Best Classifier', type(best_clf[0]).__name__, metric, ':',best_clf[1],"="*20)
-        print('\t',"*"*10,'\n')
-        pp.pprint(best_clf[0].get_params())
-        print('\t',"*"*10,'\n')
+        # print("="*20, 'Best Classifier', type(best_clf[0]).__name__, metric, ':',best_clf[1],"="*20)
+        # print('\t',"*"*10,'\n')
+        # pp.pprint(best_clf[0].get_params())
+        # print('\t',"*"*10,'\n')
+        pass
 
     return clone(best_clf[0])
 
@@ -92,7 +93,7 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
     # now that we have the best model, split the dataset based on the datasplit
 
     # We first shuffle the data set
-    np.random.shuffle(dataSet)
+    # np.random.shuffle(dataSet)
 
     # default: 70% training, 30% test
     trainingData = dataSet[:int(len(dataSet) * split), :]
@@ -117,6 +118,11 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
     # Print the output based on the requested metric
     if verbose:
         print('=' * 20, metric, '=' * 20)
+        pp = pprint.PrettyPrinter(indent=4)
+        print('\t',"*"*10,'\n')
+        pp.pprint(model.get_params())
+        print('\t',"*"*10,'\n')
+
 
     # our output
     output = 0

@@ -41,7 +41,7 @@ def generate_models_SVC():
     # degrees = ['2', '3', '4']
     # gammas = ['auto']
 
-    Cs = [0.1, 1.0, 2.0]
+    Cs = [1.0, 2.0, 3.0]
     kernels = ['linear', 'rbf']
     gammas = ['auto']
 
