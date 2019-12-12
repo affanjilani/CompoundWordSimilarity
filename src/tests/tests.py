@@ -18,7 +18,7 @@ def vanilla_dataset():
     return dataSet
 
 def log_dataset():
-    log_augmentation = feature_eng.log_transformation(vanilla_dataset(),None)
+    log_augmentation = feature_eng.log_transformation(vanilla_dataset(),'sf')
     dataset = vanilla_dataset()
     dataset = feature_eng.augment_data(dataset,log_augmentation)
 

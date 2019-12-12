@@ -5,6 +5,7 @@ from src.pre_processing.preProcess import preProcess_pipeline
 from src.feature_engineering.feature_engineering import generate_datasets
 from src.experiments.experiments import experiment_pipeline
 from src.models.GridSearch import grid_search
+from tqdm import tqdm
 
 # # Create the model(s)
 # logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=2000)
@@ -28,7 +29,9 @@ from src.models.GridSearch import grid_search
 dataSets = generate_datasets()
 
 # iterate through each dataset
-for dataset in dataSets:
+datasetnum = 1
+for dataset in tqdm(dataSets):
+    print("="*20,datasetnum,"="*20)
     LRModels = grid_search('lr')
     ADAModels = grid_search('ada')
     NBModels = grid_search('nb')
@@ -37,4 +40,5 @@ for dataset in dataSets:
     experiment_pipeline(LRModels, dataset, 5, 'macro', True, 0.9)
     experiment_pipeline(ADAModels, dataset, 5, 'macro', True, 0.9)
     experiment_pipeline(SVCModels, dataset, 5, 'macro', True, 0.9)
+    datasetnum +=1
 

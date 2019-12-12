@@ -37,7 +37,8 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
         scores[type(clf).__name__+str(clf.get_params())] = np.array([])
 
     # For each split
-    for train_index, test_index in kf.split(dataset):
+    print("="*20,"Iterating on splits","="*20)
+    for train_index, test_index in tqdm(kf.split(dataset)):
         train = dataset[train_index]
         x_train = train[:,:-1]
         y_train = train[:,-1].astype('int')
@@ -47,7 +48,8 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
         y_test = test[:,-1].astype('int')
 
         # We send this into each classifier and perform a fold
-        for clf in classifiers:
+        print("="*20,"Sending the classifiers for the current split","="*20)
+        for clf in tqdm(classifiers):
             clf_name = type(clf).__name__ + str(clf.get_params())
 
             # Get the score on this split

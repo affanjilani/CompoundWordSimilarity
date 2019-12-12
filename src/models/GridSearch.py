@@ -36,24 +36,22 @@ def generate_models_ada(estimator = None):
 # method that generates SVC models
 def generate_models_SVC():
     # list of possible hyperparameters
-    Cs = [0.001, 0.01, 0.1, 1.0]
-    kernels = ['linear', 'poly', 'rbf', 'sigmoid']
-    degrees = ['2', '3', '4']
-    gammas = ['scale','auto']
+    # Cs = [0.01, 0.1, 1.0]
+    # kernels = ['linear', 'poly', 'rbf']
+    # degrees = ['2', '3', '4']
+    # gammas = ['auto']
+
+    Cs = [0.1, 1.0, 2.0]
+    kernels = ['linear', 'rbf']
+    gammas = ['auto']
 
     listOfModels = []
     # iterate through every possible hyper parameter
     for c in Cs:
         for kernel in kernels:
             for gamma in gammas:
-                if kernel in ['linear', 'rbf', 'sigmoid']:
-                    model = SVC(C=c, kernel=kernel, gamma=gamma)
-                    listOfModels.append(model)
-                else:
-                    for degree in degrees:
-                        # create the model and append to list of models
-                        model = SVC(C=c, kernel=kernel, degree=int(degree), gamma=gamma)
-                        listOfModels.append(model)
+                model = SVC(C=c, kernel=kernel, gamma=gamma)
+                listOfModels.append(model)
     # finally, return the list of models
     return listOfModels
 
