@@ -40,14 +40,17 @@ for dataset in tqdm(dataSets):
     y_test = testingData[:, -1]
     y_test = y_test.astype('int')
 
-    y_predicted = []
-    for y in y_test:
-        y_random = random.randint(0,1)
-        y_predicted.append(y_random)
+    finalRandArray = []
+    for i in range(10):
+        y_predicted = []
+        for y in y_test:
+            y_random = random.randint(0,1)
+            y_predicted.append(y_random)
 
-    y_predicted = np.array(y_predicted)
+        y_predicted = np.array(y_predicted)
 
-    print(f1_score(y_test,y_predicted,average='macro'))
+        finalRandArray.append(f1_score(y_test,y_predicted,average='macro'))
+    print(np.average(np.array(finalRandArray)))
     # print(roc_auc_score(y_test,y_predicted))
     # LRModels = grid_search('lr')
     # ADAModels = grid_search('ada')
