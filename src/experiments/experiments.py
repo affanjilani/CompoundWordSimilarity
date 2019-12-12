@@ -6,6 +6,7 @@ from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from src.pre_processing.preProcess import CSV2Numpy
 import pprint
+import random
 
 # Perform a fold on a given classifier, given the training and test data. Return the metric of choice on this data
 def perform_fold(classifier, train_data, test_data, metric='ROC'):
@@ -141,6 +142,25 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
         print(type(model).__name__ + ": "+ str(output))
 
     return output
+
+# method that predicts randomly
+def random_labelling(dataset):
+    # parse the label's column
+    testingData = dataset[int(len(dataset) * 0.9):, :]
+    y_test = testingData[:, -1]
+    y_test = y_test.astype('int')
+
+    # our list of random labels
+    y_predicted = []
+    for y in y_test:
+        y_random = random.randint(0, 1)
+        y_predicted.append(y_random)
+
+    # convert into numpy array
+    y_predicted = np.array(y_predicted)
+
+    # print the results
+    print("Random Macro: " + str(f1_score(y_test, y_predicted, average='macro')))
 
 if __name__ == "__main__":
     # LR = LogisticRegression()
