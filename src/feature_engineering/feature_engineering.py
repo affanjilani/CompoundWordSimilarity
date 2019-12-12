@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from src.pre_processing.preProcess import preProcess_pipeline
 
 # Takes in the original data array with label and adds the augmented features
 def augment_data(data, augmentation):
@@ -84,47 +85,6 @@ def log_transformation(data, categoryToTransform):
     return new_df.values
 
 """
-    another transformation method that is defined as follows
-    f(x,lambda) = x^lambda - 1 / lambda if lambda > 0. We have to make sure that lambda is positive and not 0
-    so we will shift if necessary. 
-    Input: 
-        data: our NxM dataset matrix
-        lambda: some integer lambda 
-    output: Nxk matrix of the transformed data
-"""
-def box_cox_transform(data, lambdaValue = 2):
-    # check if lambda is negative or 0
-    if lambdaValue <= 0:
-        print("Error: Lambda Cannot be a negative integer or 0")
-        exit(-1)
-    else:
-        # get the shape of matrix
-        row, col = np.shape(data)
-        # retrieve the last col
-        col = col - 1
-        #ignore the number of parses and labels
-        columnsToIgnore = [0, col]
-        # Create a dataframe
-        new_df = pd.DataFrame()
-        df = pd.DataFrame(data)
-        for i in df.columns:
-            # ignore some columns as they are irrelevant
-            if i in columnsToIgnore:
-                continue
-            # Create our new data frame column
-            columnOfInterest = df[i]
-            # a numpy column vector
-            newColumn = columnOfInterest.to_numpy(dtype=np.float32)
-            # handling negatives
-            newColumn += 1
-            # apply box-cox transformation handling
-            newColumn = np.power(newColumn, lambdaValue) / lambdaValue
-            # append the column to the data frame
-            new_df[i] = newColumn
-        # return the array containing the box-cox transformation
-        return new_df.values
-
-"""
     Method that combines all the possible feature engineering that we want and outputs the desired final dataset
     Input: 
         Data: our original dataset
@@ -134,7 +94,7 @@ def box_cox_transform(data, lambdaValue = 2):
         isAugmentAfterEachFeatureEngineer: boolean whether or not we augment after every feature engineering
 """
 def feature_engineering_pipeline(data, categoryToTransform, listOfFeatureEngineering,
-                                 isAugmentAfterEachFeatureEngineer, lambdaValue):
+                                 isAugmentAfterEachFeatureEngineer):
     # our final list of things to augment
     listOfDataToAugment = []
 
@@ -152,12 +112,6 @@ def feature_engineering_pipeline(data, categoryToTransform, listOfFeatureEnginee
                 data = augment_data(data,log_transformation(data,categoryToTransform))
             else:
                 listOfDataToAugment.append(log_transformation(data,categoryToTransform))
-        elif string.lower() == 'bc':
-            # box-cox transformation
-            if isAugmentAfterEachFeatureEngineer:
-                data = augment_data(data,box_cox_transform(data,lambdaValue))
-            else:
-                listOfDataToAugment.append(box_cox_transform(data,lambdaValue))
 
     # finally augment everything
     for dataToAugment in listOfDataToAugment:
@@ -166,9 +120,69 @@ def feature_engineering_pipeline(data, categoryToTransform, listOfFeatureEnginee
     # return the final data
     return data
 
+# method that returns the final dataset
+def generate_datasets():
+    vanillaDataSets = generate_vanilla_datasets()
+    nonVanillaDataSets = generate_non_vanilla_datasets()
+
+    return vanillaDataSets + nonVanillaDataSets
+
+
+# method that returns the list of non-vanilla (containing similarities) datasets
+def generate_non_vanilla_datasets():
+    # Get the original data set
+    data = preProcess_pipeline()
+
+    # our list of vanilla possible datasets
+    listOfDataSets = [data]
+
+    # our possible features
+    features_log = ['s', 'sf']
+
+    # doing the interactions only
+    listOfDataSets.append(feature_engineering_pipeline(data, [], ['i'], False))
+
+    # doing the log tranformation only
+    for feature_log in features_log:
+        dataset = feature_engineering_pipeline(data, feature_log, ['l'], False)
+        listOfDataSets.append(dataset)
+
+    # doing the log and interaction together
+    for feature_log in features_log:
+        dataset = feature_engineering_pipeline(data, feature_log, ['i','l'], False)
+        listOfDataSets.append(dataset)
+
+    # finally, return the list
+    return listOfDataSets
+
+# method that returns the list of vanilla datasets
+def generate_vanilla_datasets():
+    # Get the original data set
+    vanilla = preProcess_pipeline()
+    # Drop the similarties columns
+    vanilla = np.hstack((vanilla[:, :4], vanilla[:, -1].reshape(-1, 1)))
+
+    # our list of vanilla possible datasets
+    listOfVanillaDataSets = [vanilla]
+
+    # our possible features
+    feature_transforms = ['i','l']
+
+    # generate the datasets
+    for feature in feature_transforms:
+        dataset = feature_engineering_pipeline(vanilla, 'f', list(feature), False)
+        listOfVanillaDataSets.append(dataset)
+
+    listOfVanillaDataSets.append(feature_engineering_pipeline(vanilla, 'f', feature_transforms, False))
+
+    # finally, return the list
+    return listOfVanillaDataSets
+
+
 if __name__ == '__main__':
     # pos,neg = CSV2Numpy()
     # dataSet = np.concatenate((pos, neg), 0)
     # test = box_cox_transform(dataSet, 2)
     # feature_engineering_pipeline(dataSet, 'SF', ['l','i'], True, 2)
+    generate_vanilla_datasets()
     pass
