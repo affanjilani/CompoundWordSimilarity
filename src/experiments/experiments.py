@@ -37,7 +37,7 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
         scores[type(clf).__name__+str(clf.get_params())] = np.array([])
 
     # For each split
-    for train_index, test_index in tqdm(kf.split(dataset)):
+    for train_index, test_index in kf.split(dataset):
         train = dataset[train_index]
         x_train = train[:,:-1]
         y_train = train[:,-1].astype('int')
@@ -47,7 +47,7 @@ def k_fold(classifiers, dataset, k = 5, metric = 'ROC', verbose = True):
         y_test = test[:,-1].astype('int')
 
         # We send this into each classifier and perform a fold
-        for clf in tqdm(classifiers):
+        for clf in classifiers:
             clf_name = type(clf).__name__ + str(clf.get_params())
 
             # Get the score on this split
@@ -133,8 +133,6 @@ def experiment_pipeline(classifiers, dataSet, k = 5, metric = 'ROC', verbose=Tru
         print(type(model).__name__ + ": "+ str(output))
 
     return output
-
-    return clone(model)
 
 if __name__ == "__main__":
     # LR = LogisticRegression()
