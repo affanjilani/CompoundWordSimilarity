@@ -6,6 +6,9 @@ from src.feature_engineering.feature_engineering import generate_datasets
 from src.experiments.experiments import experiment_pipeline
 from src.models.GridSearch import grid_search
 from tqdm import tqdm
+import random
+from sklearn.metrics import f1_score, accuracy_score,roc_auc_score
+import numpy as np
 
 # # Create the model(s)
 # logReg = LogisticRegression(solver='lbfgs', penalty='none',class_weight='balanced', max_iter=2000)
@@ -32,13 +35,27 @@ dataSets = generate_datasets()
 datasetnum = 1
 for dataset in tqdm(dataSets):
     print("="*20,datasetnum,"="*20)
-    LRModels = grid_search('lr')
-    ADAModels = grid_search('ada')
-    NBModels = grid_search('nb')
-    SVCModels = grid_search('svc')
 
-    experiment_pipeline(LRModels, dataset, 5, 'macro', True, 0.9)
-    experiment_pipeline(ADAModels, dataset, 5, 'macro', True, 0.9)
-    experiment_pipeline(SVCModels, dataset, 5, 'macro', True, 0.9)
+    testingData = dataset[int(len(dataset)*0.9):,:]
+    y_test = testingData[:, -1]
+    y_test = y_test.astype('int')
+
+    y_predicted = []
+    for y in y_test:
+        y_random = random.randint(0,1)
+        y_predicted.append(y_random)
+
+    y_predicted = np.array(y_predicted)
+
+    print(f1_score(y_test,y_predicted,average='macro'))
+    # print(roc_auc_score(y_test,y_predicted))
+    # LRModels = grid_search('lr')
+    # ADAModels = grid_search('ada')
+    # NBModels = grid_search('nb')
+    # SVCModels = grid_search('svc')
+    #
+    # experiment_pipeline(LRModels, dataset, 5, 'macro', True, 0.9)
+    # experiment_pipeline(ADAModels, dataset, 5, 'macro', True, 0.9)
+    # experiment_pipeline(SVCModels, dataset, 5, 'macro', True, 0.9)
     datasetnum +=1
 
