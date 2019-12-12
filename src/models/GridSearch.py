@@ -36,20 +36,24 @@ def generate_models_ada(estimator = None):
 # method that generates SVC models
 def generate_models_SVC():
     # list of possible hyperparameters
-    Cs = [0.001, 0.01, 0.1, 1.0, 10.0]
-    kernels = ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed']
-    degrees = ['1', '2', '3']
+    Cs = [0.001, 0.01, 0.1, 1.0]
+    kernels = ['linear', 'poly', 'rbf', 'sigmoid']
+    degrees = ['2', '3', '4']
     gammas = ['scale','auto']
 
     listOfModels = []
     # iterate through every possible hyper parameter
     for c in Cs:
         for kernel in kernels:
-            for degree in degrees:
-                for gamma in gammas:
-                    # create the model and append to list of models
-                    model = SVC(C=c, kernel=kernel,degree=degree,gamma=gamma)
+            for gamma in gammas:
+                if kernel in ['linear', 'rbf', 'sigmoid']:
+                    model = SVC(C=c, kernel=kernel, gamma=gamma)
                     listOfModels.append(model)
+                else:
+                    for degree in degrees:
+                        # create the model and append to list of models
+                        model = SVC(C=c, kernel=kernel, degree=int(degree), gamma=gamma)
+                        listOfModels.append(model)
     # finally, return the list of models
     return listOfModels
 
@@ -57,7 +61,7 @@ def generate_models_SVC():
 # model that generates logistic regression models
 def generate_models_logReg():
     models = []
-    penalty = ['none','l1','l2']
+    penalty = ['none','l2']
     C = [1e3,1e2,1e1,1,10,100]
     cw = [None,'balanced']
     t = [1e5,1e4,1e3,1e2]
@@ -66,7 +70,7 @@ def generate_models_logReg():
         for c in C:
             for class_weight in cw:
                 for tol in t:
-                    models.append(LogisticRegression(penalty=penalty, C=c, class_weight=class_weight, tol=tol))
+                    models.append(LogisticRegression(solver='lbfgs', penalty=p, C=c, class_weight=class_weight, tol=tol,max_iter=2000))
     return models
 
 # Method that generates models based on specific model
